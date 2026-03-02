@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getModel } from "../src/models.js";
 import { stream } from "../src/stream.js";
-import type { Context } from "../src/types.js";
+import type { Context, Model } from "../src/types.js";
 
 describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 	const originalEnv = process.env.PI_CACHE_RETENTION;
@@ -91,7 +91,7 @@ describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 			const { streamAnthropic } = await import("../src/providers/anthropic.js");
 
 			try {
-				const s = streamAnthropic(proxyModel, context, {
+				const s = streamAnthropic(proxyModel as Model<"anthropic-messages">, context, {
 					apiKey: "fake-key",
 					onPayload: (payload) => {
 						capturedPayload = payload;
@@ -120,7 +120,7 @@ describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 			const { streamAnthropic } = await import("../src/providers/anthropic.js");
 
 			try {
-				const s = streamAnthropic(baseModel, context, {
+				const s = streamAnthropic(baseModel as Model<"anthropic-messages">, context, {
 					apiKey: "fake-key",
 					cacheRetention: "none",
 					onPayload: (payload) => {
@@ -146,7 +146,7 @@ describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 			const { streamAnthropic } = await import("../src/providers/anthropic.js");
 
 			try {
-				const s = streamAnthropic(baseModel, context, {
+				const s = streamAnthropic(baseModel as Model<"anthropic-messages">, context, {
 					apiKey: "fake-key",
 					onPayload: (payload) => {
 						capturedPayload = payload;
@@ -174,7 +174,7 @@ describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 			const { streamAnthropic } = await import("../src/providers/anthropic.js");
 
 			try {
-				const s = streamAnthropic(baseModel, context, {
+				const s = streamAnthropic(baseModel as Model<"anthropic-messages">, context, {
 					apiKey: "fake-key",
 					cacheRetention: "long",
 					onPayload: (payload) => {
@@ -255,7 +255,7 @@ describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 			const { streamOpenAIResponses } = await import("../src/providers/openai-responses.js");
 
 			try {
-				const s = streamOpenAIResponses(proxyModel, context, {
+				const s = streamOpenAIResponses(proxyModel as Model<"openai-responses">, context, {
 					apiKey: "fake-key",
 					onPayload: (payload) => {
 						capturedPayload = payload;
@@ -283,7 +283,7 @@ describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 			const { streamOpenAIResponses } = await import("../src/providers/openai-responses.js");
 
 			try {
-				const s = streamOpenAIResponses(model, context, {
+				const s = streamOpenAIResponses(model as Model<"openai-responses">, context, {
 					apiKey: "fake-key",
 					cacheRetention: "none",
 					sessionId: "session-1",
@@ -311,7 +311,7 @@ describe("Cache Retention (PI_CACHE_RETENTION)", () => {
 			const { streamOpenAIResponses } = await import("../src/providers/openai-responses.js");
 
 			try {
-				const s = streamOpenAIResponses(model, context, {
+				const s = streamOpenAIResponses(model as Model<"openai-responses">, context, {
 					apiKey: "fake-key",
 					cacheRetention: "long",
 					sessionId: "session-2",
