@@ -24,7 +24,9 @@ import AjvModule from "ajv";
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { getAgentDir } from "../config.js";
+import { ollamaMistral } from "../models/ollama.js";
 import type { AuthStorage } from "./auth-storage.js";
+import { getOllamaModels } from "./ollama-discovery.js";
 import { clearConfigValueCache, resolveConfigValue, resolveHeaders } from "./resolve-config-value.js";
 
 const Ajv = (AjvModule as any).default || AjvModule;
@@ -258,6 +260,21 @@ export class ModelRegistry {
 	}
 
 	/**
+	 * Discover dynamic models from external APIs (like Ollama).
+	 */
+	async discoverDynamicModels(): Promise<void> {
+		const ollamaModels = await getOllamaModels();
+		for (const m of ollamaModels) {
+			const existingIndex = this.models.findIndex((em) => em.provider === m.provider && em.id === m.id);
+			if (existingIndex >= 0) {
+				this.models[existingIndex] = m;
+			} else {
+				this.models.push(m);
+			}
+		}
+	}
+
+	/**
 	 * Get any error from loading models.json (undefined if no error).
 	 */
 	getError(): string | undefined {
@@ -272,6 +289,9 @@ export class ModelRegistry {
 			modelOverrides,
 			error,
 		} = this.modelsJsonPath ? this.loadCustomModels(this.modelsJsonPath) : emptyCustomModelsResult();
+
+		// Add native Ollama support
+		customModels.push(ollamaMistral);
 
 		if (error) {
 			this.loadError = error;

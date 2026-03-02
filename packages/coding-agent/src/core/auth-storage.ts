@@ -297,6 +297,7 @@ export class AuthStorage {
 	 * Unlike getApiKey(), this doesn't refresh OAuth tokens.
 	 */
 	hasAuth(provider: string): boolean {
+		if (provider === "ollama") return true;
 		if (this.runtimeOverrides.has(provider)) return true;
 		if (this.data[provider]) return true;
 		if (getEnvApiKey(provider)) return true;
@@ -452,7 +453,13 @@ export class AuthStorage {
 		if (envKey) return envKey;
 
 		// Fall back to custom resolver (e.g., models.json custom providers)
-		return this.fallbackResolver?.(providerId) ?? undefined;
+		const customKey = this.fallbackResolver?.(providerId);
+		if (customKey) return customKey;
+
+		// Default for ollama
+		if (providerId === "ollama") return "ollama";
+
+		return undefined;
 	}
 
 	/**

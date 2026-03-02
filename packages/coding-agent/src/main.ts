@@ -585,6 +585,8 @@ export async function main(args: string[]) {
 	});
 	await resourceLoader.reload();
 	time("resourceLoader.reload");
+	await modelRegistry.discoverDynamicModels();
+	time("modelRegistry.discoverDynamicModels");
 
 	const extensionsResult: LoadExtensionsResult = resourceLoader.getExtensions();
 	for (const { path, error } of extensionsResult.errors) {
