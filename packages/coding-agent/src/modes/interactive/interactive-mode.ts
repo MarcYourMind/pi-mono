@@ -3219,7 +3219,7 @@ export class InteractiveMode {
 			return this.session.scopedModels.map((scoped) => scoped.model);
 		}
 
-		this.session.modelRegistry.refresh();
+		await this.session.modelRegistry.refresh();
 		try {
 			return await this.session.modelRegistry.getAvailable();
 		} catch {
@@ -3267,7 +3267,7 @@ export class InteractiveMode {
 
 	private async showModelsSelector(): Promise<void> {
 		// Get all available models
-		this.session.modelRegistry.refresh();
+		await this.session.modelRegistry.refresh();
 		const allModels = this.session.modelRegistry.getAvailable();
 
 		if (allModels.length === 0) {
@@ -3630,7 +3630,7 @@ export class InteractiveMode {
 
 						try {
 							this.session.modelRegistry.authStorage.logout(providerId);
-							this.session.modelRegistry.refresh();
+							await this.session.modelRegistry.refresh();
 							await this.updateAvailableProviderCount();
 							this.showStatus(`Logged out of ${providerName}`);
 						} catch (error: unknown) {
@@ -3724,7 +3724,7 @@ export class InteractiveMode {
 
 			// Success
 			restoreEditor();
-			this.session.modelRegistry.refresh();
+			await this.session.modelRegistry.refresh();
 			await this.updateAvailableProviderCount();
 			this.showStatus(`Logged in to ${providerName}. Credentials saved to ${getAuthPath()}`);
 		} catch (error: unknown) {

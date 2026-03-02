@@ -24,7 +24,6 @@ import AjvModule from "ajv";
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { getAgentDir } from "../config.js";
-import { ollamaMistral } from "../models/ollama.js";
 import type { AuthStorage } from "./auth-storage.js";
 import { getOllamaModels } from "./ollama-discovery.js";
 import { clearConfigValueCache, resolveConfigValue, resolveHeaders } from "./resolve-config-value.js";
@@ -244,7 +243,7 @@ export class ModelRegistry {
 	/**
 	 * Reload models from disk (built-in + custom from models.json).
 	 */
-	refresh(): void {
+	async refresh(): Promise<void> {
 		this.customProviderApiKeys.clear();
 		this.loadError = undefined;
 
@@ -253,6 +252,7 @@ export class ModelRegistry {
 		resetOAuthProviders();
 
 		this.loadModels();
+		await this.discoverDynamicModels();
 
 		for (const [providerName, config] of this.registeredProviders.entries()) {
 			this.applyProviderConfig(providerName, config);
@@ -289,9 +289,6 @@ export class ModelRegistry {
 			modelOverrides,
 			error,
 		} = this.modelsJsonPath ? this.loadCustomModels(this.modelsJsonPath) : emptyCustomModelsResult();
-
-		// Add native Ollama support
-		customModels.push(ollamaMistral);
 
 		if (error) {
 			this.loadError = error;
@@ -576,11 +573,11 @@ export class ModelRegistry {
 	 * remaining dynamic providers.
 	 * Has no effect if the provider was never registered.
 	 */
-	unregisterProvider(providerName: string): void {
+	async unregisterProvider(providerName: string): Promise<void> {
 		if (!this.registeredProviders.has(providerName)) return;
 		this.registeredProviders.delete(providerName);
 		this.customProviderApiKeys.delete(providerName);
-		this.refresh();
+		await this.refresh();
 	}
 
 	private applyProviderConfig(providerName: string, config: ProviderConfigInput): void {

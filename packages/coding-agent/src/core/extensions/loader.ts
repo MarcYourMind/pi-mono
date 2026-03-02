@@ -130,7 +130,7 @@ export function createExtensionRuntime(): ExtensionRuntime {
 		registerProvider: (name, config) => {
 			runtime.pendingProviderRegistrations.push({ name, config });
 		},
-		unregisterProvider: (name) => {
+		unregisterProvider: async (name) => {
 			runtime.pendingProviderRegistrations = runtime.pendingProviderRegistrations.filter((r) => r.name !== name);
 		},
 	};
@@ -260,7 +260,7 @@ function createExtensionAPI(
 		},
 
 		unregisterProvider(name: string) {
-			runtime.unregisterProvider(name);
+			return runtime.unregisterProvider(name);
 		},
 
 		events: eventBus,

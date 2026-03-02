@@ -1130,7 +1130,7 @@ export interface ExtensionAPI {
 	 * @example
 	 * pi.unregisterProvider("my-proxy");
 	 */
-	unregisterProvider(name: string): void;
+	unregisterProvider(name: string): Promise<void>;
 
 	/** Shared event bus for extension communication. */
 	events: EventBus;
@@ -1274,7 +1274,7 @@ export interface ExtensionRuntimeState {
 	 * After bindCore(): calls ModelRegistry directly for immediate effect.
 	 */
 	registerProvider: (name: string, config: ProviderConfig) => void;
-	unregisterProvider: (name: string) => void;
+	unregisterProvider: (name: string) => Promise<void>;
 }
 
 /**

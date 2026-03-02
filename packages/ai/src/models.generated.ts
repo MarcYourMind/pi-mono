@@ -6853,6 +6853,23 @@ export const MODELS = {
 			contextWindow: 163840,
 			maxTokens: 65536,
 		} satisfies Model<"openai-completions">,
+		"essentialai/rnj-1-instruct": {
+			id: "essentialai/rnj-1-instruct",
+			name: "EssentialAI: Rnj 1 Instruct",
+			api: "openai-completions",
+			provider: "openrouter",
+			baseUrl: "https://openrouter.ai/api/v1",
+			reasoning: false,
+			input: ["text"],
+			cost: {
+				input: 0.15,
+				output: 0.15,
+				cacheRead: 0,
+				cacheWrite: 0,
+			},
+			contextWindow: 32768,
+			maxTokens: 4096,
+		} satisfies Model<"openai-completions">,
 		"google/gemini-2.0-flash-001": {
 			id: "google/gemini-2.0-flash-001",
 			name: "Google: Gemini 2.0 Flash",
