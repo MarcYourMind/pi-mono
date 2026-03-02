@@ -153,7 +153,7 @@ describe("Tool Call Without Result Tests", () => {
 	});
 
 	describe.skipIf(!process.env.GROQ_API_KEY)("Groq Provider", () => {
-		const model = getModel("groq", "openai/gpt-oss-20b");
+		const model = getModel("groq", "llama-3.3-70b-versatile");
 
 		it("should filter out tool calls without corresponding tool results", { retry: 3, timeout: 30000 }, async () => {
 			await testToolCallWithoutResult(model);

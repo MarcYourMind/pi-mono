@@ -1,0 +1,40 @@
+{
+  "providers": {
+    "ollama": {
+      "baseUrl": "http://localhost:11434/v1",
+      "apiKey": "ollama",
+      "models": [
+        {
+          "id": "mistral",
+          "name": "Mistral 7B",
+          "api": "openai-completions",
+          "reasoning": false,
+          "input": ["text"],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 32000,
+          "maxTokens": 8000
+        },
+        {
+          "id": "phi3:mini",
+          "name": "Phi-3 Mini",
+          "api": "openai-completions",
+          "reasoning": false,
+          "input": ["text"],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 8000,
+          "maxTokens": 2000
+        }
+      ]
+    }
+  }
+}

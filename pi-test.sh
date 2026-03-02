@@ -5,10 +5,21 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Check for --no-env flag
 NO_ENV=false
+NO_OLLAMA=false
+NO_GROQ=false
 ARGS=()
+HAS_PROVIDER=false
+
 for arg in "$@"; do
   if [[ "$arg" == "--no-env" ]]; then
     NO_ENV=true
+  elif [[ "$arg" == "--no-ollama" ]]; then
+    NO_OLLAMA=true
+  elif [[ "$arg" == "--no-groq" ]]; then
+    NO_GROQ=true
+  elif [[ "$arg" == "--provider" ]]; then
+    HAS_PROVIDER=true
+    ARGS+=("$arg")
   else
     ARGS+=("$arg")
   fi
@@ -53,4 +64,33 @@ if [[ "$NO_ENV" == "true" ]]; then
   echo "Running without API keys..."
 fi
 
+# Setup local models (Ollama + Groq configs)
+bash "${SCRIPT_DIR}/setup-ollama.sh" || true
+
+# If no provider specified, auto-detect best available
+if [[ "$HAS_PROVIDER" != "true" ]]; then
+  GROQ_AVAILABLE=false
+  OLLAMA_AVAILABLE=false
+  
+  # Check if Groq API key is set
+  if [[ "$NO_GROQ" != "true" ]] && [[ -n "${GROQ_API_KEY:-}" ]]; then
+    GROQ_AVAILABLE=true
+  fi
+  
+  # Check if Ollama server is running
+  if [[ "$NO_OLLAMA" != "true" ]] && curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
+    OLLAMA_AVAILABLE=true
+  fi
+  
+  # Select best available option
+  if [[ "$GROQ_AVAILABLE" == "true" ]]; then
+    echo "Groq API detected - using Llama 3.3 70B"
+    ARGS+=("--provider" "groq" "--model" "llama-3.3-70b-versatile")
+  elif [[ "$OLLAMA_AVAILABLE" == "true" ]]; then
+    echo "Ollama detected - using Mistral 7B"
+    ARGS+=("--provider" "ollama" "--model" "mistral")
+  fi
+fi
+
 npx tsx "$SCRIPT_DIR/packages/coding-agent/src/cli.ts" ${ARGS[@]+"${ARGS[@]}"}
+
