@@ -87,8 +87,10 @@ if [[ "$HAS_PROVIDER" != "true" ]]; then
     echo "Groq API detected - using Llama 3.3 70B"
     ARGS+=("--provider" "groq" "--model" "llama-3.3-70b-versatile")
   elif [[ "$OLLAMA_AVAILABLE" == "true" ]]; then
-    echo "Ollama detected - using Mistral 7B"
-    ARGS+=("--provider" "ollama" "--model" "mistral")
+    # echo "Ollama detected - using Mistral 7B"
+    # ARGS+=("--provider" "ollama" "--model" "mistral")
+    echo "Ollama detected - using Qwen2.5:3b-instruct-q4_K_M"
+    ARGS+=("--provider" "ollama" "--model" "qwen2.5:3b-instruct-q4_K_M")
   fi
 fi
 
